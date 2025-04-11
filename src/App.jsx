@@ -5,6 +5,7 @@ import ServiceContainer from "./components/ServiceContainer";
 import EventContainer from "./components/Eventcontainer";
 import { Topbar } from "./components/Topbar";
 import Ab from "./components/Ab";
+import NewsContainer from "./components/NewsContainer";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <ProductContainer />
       <ServiceContainer />
       <EventContainer />
+      <NewsContainer />
       <Ab />
       <Footer />
     </>

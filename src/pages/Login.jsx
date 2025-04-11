@@ -1,28 +1,56 @@
 import { useState } from "react";
 import { Topbar } from "../components/Topbar";
 import Navbar from "../components/Navbar";
-import { RiEyeLine, RiEyeOffLine } from "react-icons/ri"; // Remix icons for show/hide password
+import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";
+import axios from "axios";
+import { API_URL } from "../constants/apiConstant";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (event) => {
+  // emailchange
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+  // passwordchange
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!username || !password) {
-      setError("Username and password are required!");
+    if (!email || !password) {
+      setError("Email and password are required!");
       return;
     }
 
-    // Clear error if everything is fine
     setError("");
 
-    // Handle login logic here (Example: API call)
-    console.log("Username:", username);
+    console.log("Email:", email);
     console.log("Password:", password);
+
+    try {
+      const response = await axios.post(`${API_URL}/login`, {
+        email: email,
+        password: password,
+      });
+
+      if (response.status === 200) {
+        console.log("Login successful:", response.data);
+        // save token to local storage
+        localStorage.setItem("token", response.data.access_token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        // redirect to home page
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Invalid email or password");
+    }
   };
 
   return (
@@ -38,11 +66,12 @@ function Login() {
             {error && <p className="text-red-500 text-center">{error}</p>}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block font-medium">Username:</label>
+                <label className="block font-medium">Email:</label>
                 <input
                   type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={email}
+                  onChange={(e) => handleEmailChange(e)}
+                  placeholder="Enter your email"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Enter your username"
                 />
@@ -53,7 +82,9 @@ function Login() {
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => handlePasswordChange(e)}
+                    placeholder="Enter your password"
+                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="Enter your password"
                   />
@@ -75,6 +106,7 @@ function Login() {
               </div>
               <button
                 type="submit"
+                onClick={handleSubmit}
                 className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
               >
                 Login

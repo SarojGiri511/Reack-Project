@@ -1,6 +1,8 @@
+import React, { useState } from "react";
 import { Topbar } from "../components/Topbar";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { API_URL_PRODUCT } from "../constants/apiConstant";
 import {
   Ri24HoursFill,
   RiBankCard2Fill,
@@ -9,22 +11,19 @@ import {
   RiTruckFill,
   RiVerifiedBadgeFill,
 } from "react-icons/ri";
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 function SingleProduct() {
   const { state } = useLocation();
+  //access the product object from the state
   const product = state.product;
-  console.log(product);
 
   const [qty, setQty] = useState(1);
   const increment = () => {
     setQty(qty + 1);
   };
   const decrement = () => {
-    if (qty > 1) {
-      setQty(qty - 1);
-    }
+    if (qty > 1) setQty(qty - 1);
   };
   return (
     <div>
@@ -32,10 +31,10 @@ function SingleProduct() {
       <Navbar />
       <div className="grid grid-cols-4 gap-4 md:px-32 px-20 py-10">
         <div>
-          <img src="https://picsum.photos/500" alt="product" />
+          <img src={`${API_URL_PRODUCT}` + product.photopath} alt="product" />
         </div>
         <div className="col-span-2">
-          <h1 className="text-2xl font-bold">{product.productname}</h1>
+          <h1 className="text-2xl font-bold">{product.title}</h1>
           <div className="flex items-center py-2">
             <RiStarFill className="text-yellow-500" />
             <RiStarFill className="text-yellow-500" />
@@ -44,7 +43,7 @@ function SingleProduct() {
             <RiStarFill className="text-yellow-500" />
             <p>(200)</p>
           </div>
-          <p className="text-lg font-bold">$100</p>
+          <p className="text-lg font-bold">${product.price}</p>
           <p className="text-sm text-gray-600">
             Lorem ipsum dolor, sit amet consectetur adipisicing elit.
             Accusantium nihil reprehenderit corporis obcaecati similique
@@ -53,15 +52,15 @@ function SingleProduct() {
           </p>
           <div className="flex items-center py-2">
             <button
-              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
               onClick={decrement}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
             >
               -
             </button>
             <p className="px-4">{qty}</p>
             <button
-              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
               onClick={increment}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
             >
               +
             </button>
